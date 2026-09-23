@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { validateCases, type Case } from './src/cases.ts';
-import { JUDGE_MODEL, MissingRecording, MODEL_LABEL, TEMPERATURE, setRepeat, type Mode } from './src/model.ts';
+import { JUDGE_MODEL, MissingRecording, MODEL_LABEL, setRepeat, type Mode } from './src/model.ts';
 import { rubricVersion } from './src/prompts.ts';
 import { renderReport, type Row } from './src/report.ts';
 import { runCase } from './src/run.ts';
@@ -46,7 +46,7 @@ try {
   throw err;
 }
 
-const report = renderReport(rows, { model: MODEL_LABEL, temperature: TEMPERATURE, judge: JUDGE_MODEL, rubric: rubricVersion(), skills: skillsDir, mode });
+const report = renderReport(rows, { model: MODEL_LABEL, judge: JUDGE_MODEL, rubric: rubricVersion(), skills: skillsDir, mode });
 mkdirSync(out, { recursive: true });
 writeFileSync(`${out}/report.md`, report);
 writeFileSync(`${out}/rows.json`, JSON.stringify(rows, null, 2) + '\n');

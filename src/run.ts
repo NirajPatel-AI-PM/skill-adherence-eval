@@ -12,8 +12,7 @@ export async function runCase(c: Case, skills: Skill[], rubric: string, mode: Mo
 
   // Adherence is measured on the expected skill whatever was selected, so the two numbers stay independent.
   const skill = skills.find((s) => s.name === c.expectSkill)!;
-  const { text: output, stopReason } = await callModel(adherenceRequest(skill, c.request), mode);
-  const truncated = stopReason === 'max_tokens';
+  const { text: output } = await callModel(adherenceRequest(skill, c.request), mode);
 
   const checks = c.checks.filter((k) => k.kind !== 'judge').map((k) => ({ label: k.label, pass: runCheck(k, output) === true }));
   const judged = c.checks.filter((k) => k.kind === 'judge');
@@ -22,5 +21,5 @@ export async function runCase(c: Case, skills: Skill[], rubric: string, mode: Mo
     const verdicts = parseJudge((await callModel({ ...judgeRequest(rubric, c.request, output, criteria), model: JUDGE_MODEL }, mode)).text, criteria.length);
     judged.forEach((k, i) => checks.push({ label: k.label, pass: verdicts?.[i] ?? false }));
   }
-  return { ...base, checks, adherent: checks.every((k) => k.pass), output, truncated };
+  return { ...base, checks, adherent: checks.every((k) => k.pass), output };
 }

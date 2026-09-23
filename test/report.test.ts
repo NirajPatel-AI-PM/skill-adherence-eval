@@ -33,20 +33,10 @@ test('the noise floor is the spread of the adherence rate between repeats', () =
 });
 
 test('the report states the model, judge, rubric version and noise floor', () => {
-  const md = renderReport(rows, { model: 'm', temperature: 1, rubric: 'abc123', skills: 'x', mode: 'replay', judge: 'j' });
-  assert.match(md, /Model: m, temperature 1/);
+  const md = renderReport(rows, { model: 'm', rubric: 'abc123', skills: 'x', mode: 'replay', judge: 'j' });
+  assert.match(md, /Model: m\. Judge/);
   assert.match(md, /Judge: j/);
   assert.match(md, /Rubric: `abc123`/);
   assert.match(md, /Noise floor: 50 points/);
 });
 
-test('the header says temperature default when none is set', () => {
-  const md = renderReport(rows, { model: 'm', temperature: undefined, rubric: 'abc123', skills: 'x', mode: 'replay', judge: 'j' });
-  assert.match(md, /temperature default/);
-});
-
-test('truncated answers are counted and reported', () => {
-  const t = [{ ...rows[0], truncated: true }, ...rows.slice(1)];
-  assert.equal(summarize(t).truncated, 1);
-  assert.equal(summarize(rows).truncated, 0);
-});

@@ -13,7 +13,7 @@ Each case gets two scores, and the eval keeps them apart.
 
 The eval repeats every case `--repeats` times. The spread of the adherence rate between repeats is the noise floor, and the report says that a difference smaller than the noise floor is not evidence.
 
-The eval records every model call to a JSON file named by a hash of the whole request: model, temperature or default, thinking, system, messages, max tokens, and repeat when above 0. An edited skill changes the hash, so it can never reuse an old answer. Replay mode reads recordings and never calls the model. When a recording is missing, the eval prints the request key and exits 2 rather than invent a response.
+The eval records every model call to a JSON file named by a hash of the whole request: model, thinking, system, messages, and repeat when above 0. An edited skill changes the hash, so it can never reuse an old answer. Replay mode reads recordings and never calls the model. When a recording is missing, the eval prints the request key and exits 2 rather than invent a response.
 
 ## Run it
 
@@ -31,18 +31,19 @@ Run live on your own skills:
 node eval.ts --live --skills path/to/skills --cases path/to/cases.json
 ```
 
-Live mode reads `ANTHROPIC_API_KEY` from the environment. It calls the API only for requests that have no recording, and it records each answer, so a live run can be replayed later without a key.
+Live mode runs `claude -p` for each request, so it uses your Claude Code login and needs no API key. Log in to Claude Code first. It calls the model only for requests that have no recording, and it records each answer, so a live run can be replayed later without logging in. The recordings hold the request and the answer, never a credential.
+
+Each call runs in safe mode with no tools, so your own skills, plugins, hooks and `CLAUDE.md` stay out of it. The eval's prompt replaces Claude Code's system prompt.
 
 | Flag or variable | Default | What it sets |
 | --- | --- | --- |
-| `--live` | off | Call the API for missing recordings. Without it, the eval replays. |
+| `--live` | off | Call the model through `claude -p` for missing recordings. Without it, the eval replays. |
 | `--skills <dir>` | `examples/team-os/skills` | A folder of skill folders, each with a `SKILL.md`. |
 | `--cases <file>` | `examples/team-os/cases.json` | The cases to run. |
 | `--repeats <n>` | `1` | How many times each case runs. Two or more measure the noise floor. |
 | `--out <dir>` | `results` | Where `report.md` and `rows.json` go. |
 | `RECORDINGS_DIR` | `recordings` | Where the eval reads and writes recordings. |
-| `MODEL_LABEL` | `claude-sonnet-5` | The model id sent to the API. It is part of every recording key. |
-| `TEMPERATURE` | unset | The sampling temperature. Sent only when set; current model generations reject an explicit temperature with a 400, so leave this unset for them. A value that is not a number stops the run. Never sent to the judge. Part of every recording key as the value or `default`, except judge keys. |
+| `MODEL_LABEL` | `claude-sonnet-5` | The model id passed to `claude --model`. It is part of every recording key. If Claude Code answers with a different model, the run stops. |
 | `JUDGE_MODEL` | `claude-opus-5` | The model that grades judge checks. Pinned across runs, so changing `MODEL_LABEL` to test a new generation moves only the model under test, not the grader. |
 
 The skill loader reads single-line `name` and `description` fields from the front matter. It does not support multi-line YAML values.
@@ -126,8 +127,9 @@ The cases and the skills snapshot have not changed since commit `b744e1e`, which
 - There are 16 cases. Thirteen score adherence, one to three per skill, which is too few to rank the skills against each other.
 - A model judges some checks. The judge model is pinned (`JUDGE_MODEL`, default `claude-opus-5`) separately from the model under test, and the eval pins the rubric by hash, but a judge is not a person. `rate.ts` measures how often a person agrees with it.
 - The selection prompt approximates how an agent finds skills. It lists each skill's name and description and asks for one line back. It is not Claude Code's own prompt or any other product's.
-- An answer that hits the token limit is scored as written. The report counts these on its Truncated line.
-- The model runs at the default temperature unless `TEMPERATURE` is set, so each repeat still samples again. The noise floor measures the spread across repeats, and three repeats is a small sample of it.
+- Claude Code adds a few hundred tokens of its own context to each call, even in safe mode. The eval cannot remove it, so the model sees slightly more than the eval's prompt.
+- Claude Code sets the output token limit. An answer that goes past it stops the run with an error; it is never scored.
+- The model runs at its default temperature, which `claude -p` does not let the eval set, so each repeat samples again. The noise floor measures the spread across repeats, and three repeats is a small sample of it.
 - Thinking is off on every call.
 - Adherence runs as one turn with no tools. The prompt tells the model to print a file's contents where the skill says to write the file. An agent with tools may behave differently.
 

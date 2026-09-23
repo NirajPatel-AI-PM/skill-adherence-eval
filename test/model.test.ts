@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { MissingRecording, callModel, keyOf, setRepeat } from '../src/model.ts';
 
-const req = { system: 's', messages: [{ role: 'user' as const, content: 'one' }], maxTokens: 8 };
+const req = { system: 's', messages: [{ role: 'user' as const, content: 'one' }] };
 
 test('the key changes when the request changes', () => {
   assert.notEqual(keyOf(req), keyOf({ ...req, system: 't' }));
@@ -34,17 +34,4 @@ test('the judge key does not depend on MODEL_LABEL, but the plain key does', () 
   const b = run('b');
   assert.notEqual(a.plain, b.plain);
   assert.equal(a.judge, b.judge);
-});
-
-test('TEMPERATURE changes the plain key but never the judge key', () => {
-  const run = (env: Record<string, string>) =>
-    JSON.parse(execFileSync(process.execPath, ['test/fixtures/print-keys.ts'], { env: { ...process.env, ...env }, encoding: 'utf8' }));
-  const a = run({ TEMPERATURE: '' });
-  const b = run({ TEMPERATURE: '0.5' });
-  assert.notEqual(a.plain, b.plain);
-  assert.equal(a.judge, b.judge);
-});
-
-test('a non-numeric TEMPERATURE stops the run', () => {
-  assert.throws(() => execFileSync(process.execPath, ['test/fixtures/print-keys.ts'], { env: { ...process.env, TEMPERATURE: 'warm' }, stdio: 'pipe' }));
 });

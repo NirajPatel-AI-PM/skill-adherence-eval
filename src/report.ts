@@ -13,7 +13,6 @@ export type Row = {
   checks: CheckResult[];
   adherent: boolean | null;
   output: string;
-  truncated?: boolean;
 };
 export type Summary = {
   cases: number;
@@ -23,7 +22,6 @@ export type Summary = {
   perSkill: Array<{ skill: string; adherent: number; total: number }>;
   failedChecks: Array<{ label: string; count: number }>;
   noiseFloor: number | null;
-  truncated: number;
 };
 
 const pct = (n: number, d: number) => (d ? `${Math.round((100 * n) / d)}%` : 'n/a');
@@ -55,17 +53,16 @@ export function summarize(rows: Row[]): Summary {
     perSkill: [...perSkillMap.entries()].map(([skill, p]) => ({ skill, ...p })).sort((a, b) => a.skill.localeCompare(b.skill)),
     failedChecks: [...failed.entries()].map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label)),
     noiseFloor: repeats.length > 1 ? Math.max(...rates) - Math.min(...rates) : null,
-    truncated: scored.filter((r) => r.truncated).length,
   };
 }
 
-export function renderReport(rows: Row[], meta: { model: string; temperature: number | undefined; judge: string; rubric: string; skills: string; mode: Mode }): string {
+export function renderReport(rows: Row[], meta: { model: string; judge: string; rubric: string; skills: string; mode: Mode }): string {
   const s = summarize(rows);
   const misses = rows.filter((r) => !r.selectionCorrect);
   return [
     '# Skill adherence: results',
     '',
-    `Mode: ${meta.mode}. Model: ${meta.model}, temperature ${meta.temperature ?? 'default'}. Judge: ${meta.judge}. Rubric: \`${meta.rubric}\`. Skills: ${meta.skills}.`,
+    `Mode: ${meta.mode}. Model: ${meta.model}. Judge: ${meta.judge}. Rubric: \`${meta.rubric}\`. Skills: ${meta.skills}.`,
     `${s.cases} cases, ${s.repeats} repeats, ${rows.length} rows.`,
     '',
     '## Totals',
@@ -75,7 +72,6 @@ export function renderReport(rows: Row[], meta: { model: string; temperature: nu
     s.noiseFloor === null
       ? '- Noise floor: not measured, one repeat. Treat small differences as noise.'
       : `- Noise floor: ${Math.round(s.noiseFloor * 100)} points, the spread of the adherence rate between repeats. A smaller difference is not evidence.`,
-    `- Truncated: ${s.truncated} of ${s.adherence.total} answers hit the token limit and were scored as written.`,
     '',
     '## Adherence by skill',
     '',
