@@ -110,7 +110,7 @@ The example below is hypothetical. It is not a case in this repository's set.
   "checks": [{ "label": "names a measure", "kind": "contains", "value": "Measure" }] }
 ```
 
-The example set in `examples/team-os/` has seven skills, copied from the `team-os` repository at commit `9862272`, and 16 cases. Thirteen expect a skill and three expect none. All 16 are designed cases. None came from a reported issue.
+The example set in `examples/team-os/` has seven skills, copied from the `team-os` repository at commit `845f0b5`, and 16 cases. Thirteen expect a skill and three expect none. All 16 are designed cases. None came from a reported issue.
 
 ## Results
 
@@ -118,7 +118,7 @@ The example set in `examples/team-os/` has seven skills, copied from the `team-o
 
 This section will hold the `compare.ts` table for two model generations on the same skills and cases, whether the difference exceeds the noise floor, and the human agreement line from `rate.ts`.
 
-The cases have not changed since commit `3a88ac5`, which came before any run.
+The cases have not changed since commit `2bb029c`, which came before any run.
 
 ## What this does not prove
 
