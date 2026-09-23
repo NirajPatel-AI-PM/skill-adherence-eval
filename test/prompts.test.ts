@@ -21,6 +21,12 @@ test('selection parses a name, none, and garbage', () => {
   assert.equal(parseSelection('I would use the spec skill'), undefined);
 });
 
+test('selection parses markdown around the label, and lowercases the name', () => {
+  assert.equal(parseSelection('**SKILL:** spec'), 'spec');
+  assert.equal(parseSelection('Skill: spec'), 'spec');
+  assert.equal(parseSelection('SKILL: `spec`'), 'spec');
+});
+
 test('adherence gives the model the skill body and the request', () => {
   const r = adherenceRequest(skills[1], 'write a spec for search');
   assert.ok(r.system.includes('Write it.'));

@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { validateCases, type Case } from './src/cases.ts';
-import { MissingRecording, MODEL_LABEL, TEMPERATURE, setRepeat, type Mode } from './src/model.ts';
+import { JUDGE_MODEL, MissingRecording, MODEL_LABEL, TEMPERATURE, setRepeat, type Mode } from './src/model.ts';
 import { rubricVersion } from './src/prompts.ts';
 import { renderReport, type Row } from './src/report.ts';
 import { runCase } from './src/run.ts';
@@ -16,7 +16,12 @@ const mode: Mode = process.argv.includes('--live') ? 'live' : 'replay';
 const skillsDir = arg('skills', 'examples/team-os/skills');
 const casesPath = arg('cases', 'examples/team-os/cases.json');
 const out = arg('out', 'results');
-const repeats = Number(arg('repeats', '1'));
+const repeatsArg = arg('repeats', '1');
+const repeats = Number(repeatsArg);
+if (!Number.isInteger(repeats) || repeats < 1) {
+  console.error(`--repeats must be a positive integer, got ${repeatsArg}`);
+  process.exit(1);
+}
 
 const skills = loadSkills(resolve(skillsDir));
 const cases = JSON.parse(readFileSync(casesPath, 'utf8')) as Case[];
@@ -41,7 +46,7 @@ try {
   throw err;
 }
 
-const report = renderReport(rows, { model: MODEL_LABEL, temperature: TEMPERATURE, rubric: rubricVersion(), skills: skillsDir, mode });
+const report = renderReport(rows, { model: MODEL_LABEL, temperature: TEMPERATURE, judge: JUDGE_MODEL, rubric: rubricVersion(), skills: skillsDir, mode });
 mkdirSync(out, { recursive: true });
 writeFileSync(`${out}/report.md`, report);
 writeFileSync(`${out}/rows.json`, JSON.stringify(rows, null, 2) + '\n');

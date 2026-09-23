@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 export type Skill = { name: string; description: string; body: string };
 
-// ponytail: reads single-line name and description only; multi-line YAML values are not supported.
+// reads single-line name and description only; multi-line YAML values are not supported.
 export function parseSkill(text: string): Skill {
   const m = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(text);
   if (!m) throw new Error('SKILL.md has no front matter');

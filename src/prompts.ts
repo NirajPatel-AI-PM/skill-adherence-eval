@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import type { Request } from './model.ts';
 import type { Skill } from './skills.ts';
 
-// ponytail: approximates how an agent discovers skills; it is not Claude Code's own prompt.
+// approximates how an agent discovers skills; it is not Claude Code's own prompt.
 export function selectionRequest(skills: Skill[], request: string): Request {
   const list = skills.map((s) => `- ${s.name}: ${s.description}`).join('\n');
   return {
@@ -14,16 +14,17 @@ export function selectionRequest(skills: Skill[], request: string): Request {
 }
 
 export function parseSelection(text: string): string | null | undefined {
-  const m = /SKILL:\s*([\w-]+)/.exec(text);
+  const m = /SKILL:\W*([\w-]+)/i.exec(text);
   if (!m) return undefined;
-  return m[1] === 'none' ? null : m[1];
+  const name = m[1].toLowerCase();
+  return name === 'none' ? null : name;
 }
 
 export function adherenceRequest(skill: Skill, request: string): Request {
   return {
     system: `Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name="${skill.name}">\n${skill.body}\n</skill>`,
     messages: [{ role: 'user', content: request }],
-    maxTokens: 2048,
+    maxTokens: 8192,
   };
 }
 

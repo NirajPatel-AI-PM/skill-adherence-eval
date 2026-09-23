@@ -56,13 +56,13 @@ export function summarize(rows: Row[]): Summary {
   };
 }
 
-export function renderReport(rows: Row[], meta: { model: string; temperature: number; rubric: string; skills: string; mode: Mode }): string {
+export function renderReport(rows: Row[], meta: { model: string; temperature: number | undefined; judge: string; rubric: string; skills: string; mode: Mode }): string {
   const s = summarize(rows);
   const misses = rows.filter((r) => !r.selectionCorrect);
   return [
     '# Skill adherence: results',
     '',
-    `Mode: ${meta.mode}. Model: ${meta.model}, temperature ${meta.temperature}. Rubric: \`${meta.rubric}\`. Skills: ${meta.skills}.`,
+    `Mode: ${meta.mode}. Model: ${meta.model}, temperature ${meta.temperature ?? 'default'}. Judge: ${meta.judge}. Rubric: \`${meta.rubric}\`. Skills: ${meta.skills}.`,
     `${s.cases} cases, ${s.repeats} repeats, ${rows.length} rows.`,
     '',
     '## Totals',

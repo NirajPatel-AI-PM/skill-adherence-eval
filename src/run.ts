@@ -1,6 +1,6 @@
 import type { Case } from './cases.ts';
 import { runCheck } from './cases.ts';
-import { callModel, type Mode } from './model.ts';
+import { callModel, JUDGE_MODEL, type Mode } from './model.ts';
 import { adherenceRequest, judgeRequest, parseJudge, parseSelection, selectionRequest } from './prompts.ts';
 import type { Row } from './report.ts';
 import type { Skill } from './skills.ts';
@@ -18,7 +18,7 @@ export async function runCase(c: Case, skills: Skill[], rubric: string, mode: Mo
   const judged = c.checks.filter((k) => k.kind === 'judge');
   if (judged.length) {
     const criteria = judged.map((k) => (k.kind === 'judge' ? k.criterion : ''));
-    const verdicts = parseJudge(await callModel(judgeRequest(rubric, c.request, output, criteria), mode), criteria.length);
+    const verdicts = parseJudge(await callModel({ ...judgeRequest(rubric, c.request, output, criteria), model: JUDGE_MODEL }, mode), criteria.length);
     judged.forEach((k, i) => checks.push({ label: k.label, pass: verdicts?.[i] ?? false }));
   }
   return { ...base, checks, adherent: checks.every((k) => k.pass), output };

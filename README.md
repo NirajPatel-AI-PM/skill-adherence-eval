@@ -13,7 +13,7 @@ Each case gets two scores, and the eval keeps them apart.
 
 The eval repeats every case `--repeats` times. The spread of the adherence rate between repeats is the noise floor, and the report says that a difference smaller than the noise floor is not evidence.
 
-The eval records every model call to a JSON file named by a hash of the whole request: model, temperature, system prompt, messages and repeat number. An edited skill changes the hash, so it can never reuse an old answer. Replay mode reads recordings and never calls the model. When a recording is missing, the eval prints the request key and exits 2 rather than invent a response.
+The eval records every model call to a JSON file named by a hash of the whole request: model, temperature or default, thinking, system, messages, max tokens, and repeat when above 0. An edited skill changes the hash, so it can never reuse an old answer. Replay mode reads recordings and never calls the model. When a recording is missing, the eval prints the request key and exits 2 rather than invent a response.
 
 ## Run it
 
@@ -42,7 +42,8 @@ Live mode reads `ANTHROPIC_API_KEY` from the environment. It calls the API only 
 | `--out <dir>` | `results` | Where `report.md` and `rows.json` go. |
 | `RECORDINGS_DIR` | `recordings` | Where the eval reads and writes recordings. |
 | `MODEL_LABEL` | `claude-sonnet-5` | The model id sent to the API. It is part of every recording key. |
-| `TEMPERATURE` | `1` | The sampling temperature. It is part of every recording key. |
+| `TEMPERATURE` | unset | The sampling temperature. Sent only when set; current model generations reject an explicit temperature with a 400, so leave this unset for them. Part of every recording key as the value or `default`. |
+| `JUDGE_MODEL` | `claude-opus-5` | The model that grades judge checks. Pinned across runs, so changing `MODEL_LABEL` to test a new generation moves only the model under test, not the grader. |
 
 The skill loader reads single-line `name` and `description` fields from the front matter. It does not support multi-line YAML values.
 
@@ -101,6 +102,8 @@ A case counts as adherent only when every check passes.
 
 When someone reports that a skill misbehaved, turn the report into a case. `caseFromIssue` in `src/cases.ts` sets `origin` to `"reported-issue"` and keeps the report's text in `issue`. Each row in `rows.json` carries the origin, so you can count reported issues apart from designed cases. Commit the case before you change the skill, so a run on the old skill can show the failure.
 
+The example below is hypothetical. It is not a case in this repository's set.
+
 ```json
 { "id": "spec-4", "origin": "reported-issue", "issue": "It wrote a spec with no measure.",
   "expectSkill": "spec", "request": "Write the spec for archiving stale projects.",
@@ -121,9 +124,10 @@ The cases have not changed since commit `3a88ac5`, which came before any run.
 
 - The same person wrote the skills and the cases. A second author would write harder cases.
 - There are 16 cases. Thirteen score adherence, one to three per skill, which is too few to rank the skills against each other.
-- A model judges some checks, and it is the same model that did the work. The eval pins the rubric by hash, but a judge is not a person. `rate.ts` measures how often a person agrees with it.
+- A model judges some checks. The judge model is pinned (`JUDGE_MODEL`, default `claude-opus-5`) separately from the model under test, and the eval pins the rubric by hash, but a judge is not a person. `rate.ts` measures how often a person agrees with it.
 - The selection prompt approximates how an agent finds skills. It lists each skill's name and description and asks for one line back. It is not Claude Code's own prompt or any other product's.
-- The model runs at temperature 1, so each repeat samples again. The noise floor measures the spread across repeats, and three repeats is a small sample of it.
+- The model runs at the default temperature unless `TEMPERATURE` is set, so each repeat still samples again. The noise floor measures the spread across repeats, and three repeats is a small sample of it.
+- Thinking is off on every call.
 - Adherence runs as one turn with no tools. The prompt tells the model to print a file's contents where the skill says to write the file. An agent with tools may behave differently.
 
 ## Run the tests
