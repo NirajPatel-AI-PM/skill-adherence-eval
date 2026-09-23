@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nWe keep hearing that people can't find last quarter's planning docs in our internal wiki. I want to build a better search. Write the spec before we start.\n\nWork:\nBefore I write the spec, I need to ask about two required sections:\n\n**1. Outcome — what changes in user behavior?**\n\n\"Better search\" is a capability. What should actually change? For example:\n- People stop asking teammates in Slack where docs are\n- People find the doc they need without leaving the wiki\n- Time-to-find drops below X seconds\n\nWhich is closest, or something else?\n\n**2. Measure — how will we know it worked?**\n\nDo we have any current data to baseline against? For example:\n- Search sessions that end with no click (zero-result or rage-quit rate)\n- Slack messages asking for doc links\n- A planned survey score\n\nIf you have none of these today, that's fine — we can make the first milestone *finding the baseline* — but I want to confirm that's the intent rather than assume.\n\n---\n\nEverything else I can infer from what you've shared:\n- **Who:** internal team members looking for planning artifacts under time pressure\n- **Evidence:** recurring complaints (\"we keep hearing it\") — I'll note this is anecdotal and flag it\n- **Risk surface:** internal wiki, so likely low external exposure but possibly sensitive internal plans\n\nAnswer those two questions and I'll write the full spec right away.\n\nCriteria:\nC1: The outcome section describes a change in user behavior or a metric, not a feature to build.\nC2: The measure section names a metric, where it comes from, its current value or how to get it, and a success threshold."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: FAIL\nC2: FAIL"
+}

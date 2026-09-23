@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"spec\">\n# Spec\n\nWrite `specs/YYYY-MM-DD-<topic>.md` with these sections, in this order. One page.\n\n1. **Outcome.** The change in user behavior or a metric, in one sentence. Not a feature.\n2. **Who.** The user and the job they are doing when they need this.\n3. **Evidence.** What makes us think the problem is real. Quote users or cite a number. If there is none, say so, and make the first milestone finding some.\n4. **Smallest version.** The least we can ship that tests the outcome. List what is out.\n5. **Measure.** The metric, where it comes from, its value today, and the value that counts as success. Decide this before building.\n6. **Risks.** Safety, privacy, data handling and security. Name who has to approve.\n7. **Decisions.** Each open question, the options, and who decides by when.\n\nStop and ask the user when section 1 or section 5 is empty. A spec without an outcome or a measure is a task list.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "We keep hearing that people can't find last quarter's planning docs in our internal wiki. I want to build a better search. Write the spec before we start."
+      }
+    ]
+  },
+  "response": "Before I write the spec, I need to nail down two things the skill requires before building anything:\n\n**Section 1 – Outcome:** \"Better search\" is a feature. What's the *behavior change* you want to see? For example:\n- People stop asking teammates where documents are (fewer Slack messages)?\n- People find the right doc on the first try without opening 3–4 wrong ones?\n- People complete planning-related tasks faster?\n\nPick the one that matters most, in one sentence.\n\n**Section 5 – Measure:** How will you know search is better? For example:\n- % of searches that result in a document being opened and not immediately bounced back\n- Time-to-find (seconds from search to document open)\n- \"Zero result\" search rate\n- A user satisfaction score on search results\n\nWhat's the metric, where does it come from (wiki analytics? a survey?), and what's its value *today*?\n\nOnce I have those two answers I'll write the full spec. Everything else (who the users are, the smallest version, risks) I can reason through from context — but outcome and measure I won't assume."
+}

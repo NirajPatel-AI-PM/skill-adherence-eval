@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nRelease candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?\n\nWork:\n## Release Gate Assessment\n\nRunning the gate against the four changes in this release candidate.\n\n---\n\n### Release Gate Table\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search Ranking | ✅ Done | ✅ Done | ✅ Green | No restricted data noted | **✅ Ready** |\n| CSV Export | ❌ Missing | ✅ Done | ❓ Unknown | Potential data exposure risk — needs review | **❌ Not ready** |\n| SSO | ✅ Done | ❌ Missing | ❌ Failing | Auth change — needs security review | **❌ Not ready** |\n| Copy Fix | ❌ Missing | ❌ Missing | ❓ Unknown | No restricted data expected | **❌ Not ready** |\n\n---\n\n### ❌ Release is blocked. Three changes are not ready:\n\n1. **CSV Export** — No spec. Per the gate rule, a missing spec means the change either needs one written or must be pulled from the release. Additionally, tests were not reported as green — that needs confirmation. CSV export also touches data output and warrants a security review before ship.\n\n2. **SSO** — Tests are failing. This is a hard block regardless of spec status. SSO also needs a peer review (run the `team-os:review` skill) and a security review, given it touches authentication.\n\n3. **Copy Fix** — No spec and no review. Even a small copy change needs both. Run `team-os:review` and determine whether a spec is warranted (or document explicitly why one is not needed).\n\n---\n\n### To unblock the release:\n\n| Action | Owner |\n|---|---|\n| Write a spec for CSV Export *or* pull it from the RC | — |\n| Confirm/fix test run for CSV Export | — |\n| Get a security review for CSV Export | — |\n| Fix failing tests for SSO | — |\n| Run `team-os:review` on SSO | — |\n| Get a security review for SSO | — |\n| Write a spec for Copy Fix *or* document exemption | — |\n| Run `team-os:review` on Copy Fix | — |\n\n**Search Ranking** is the only change cleared to ship. The release goes out when every other verdict is flipped to \"ready.\"\n\nCriteria:\nC1: The work concludes the release is not ready and names CSV export and SSO as blockers with reasons.\nC2: The work says what the copy fix needs, or explicitly decides it can ship without a spec and says why."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS\nC2: PASS"
+}

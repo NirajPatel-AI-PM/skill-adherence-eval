@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"spec\">\n# Spec\n\nWrite `specs/YYYY-MM-DD-<topic>.md` with these sections, in this order. One page.\n\n1. **Outcome.** The change in user behavior or a metric, in one sentence. Not a feature.\n2. **Who.** The user and the job they are doing when they need this.\n3. **Evidence.** What makes us think the problem is real. Quote users or cite a number. If there is none, say so, and make the first milestone finding some.\n4. **Smallest version.** The least we can ship that tests the outcome. List what is out.\n5. **Measure.** The metric, where it comes from, its value today, and the value that counts as success. Decide this before building.\n6. **Risks.** Safety, privacy, data handling and security. Name who has to approve.\n7. **Decisions.** Each open question, the options, and who decides by when.\n\nStop and ask the user when section 1 or section 5 is empty. A spec without an outcome or a measure is a task list.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Write a spec for adding dark mode to the admin console."
+      }
+    ]
+  },
+  "response": "I need to stop and ask about two required sections before writing this spec.\n\n**Section 1 – Outcome:** A spec needs an outcome (a change in user behavior or a metric), not just a feature description. \"Add dark mode\" is the feature. What's the *outcome* you're after? For example:\n- Admins spend more time in the console without eye strain complaints?\n- Retention or session length increases among power users?\n- A specific complaint or support ticket rate drops?\n\n**Section 5 – Measure:** What metric would tell us dark mode succeeded, where does it come from, and what number counts as a win? Without this, we can't tell if the work was worth it.\n\nCan you share:\n1. What change in admin behavior or which metric should this move?\n2. How will you measure success, and what's the current baseline?\n\nIf you don't have numbers yet, that's fine — we can make the first milestone *finding* the evidence. Just let me know and I'll write the spec that way."
+}

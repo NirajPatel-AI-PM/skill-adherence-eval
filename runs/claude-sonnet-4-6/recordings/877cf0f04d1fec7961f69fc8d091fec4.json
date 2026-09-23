@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nRelease candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?\n\nWork:\n## Release Gate Assessment\n\nHere's the verdict table for the four changes in this release candidate:\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search ranking | ✅ Done | ✅ Done | ✅ Green | ⚠️ Not assessed | **Ready** ¹ |\n| CSV export | ❌ Missing | ✅ Done | ⚠️ Not assessed | ⚠️ Not assessed | **NOT READY** |\n| SSO | ✅ Done | ⚠️ Not assessed | ❌ Failing | ⚠️ Not assessed | **NOT READY** |\n| Copy fix | ❌ Missing | ❌ Missing | ⚠️ Not assessed | ⚠️ Not assessed | **NOT READY** |\n\n> ¹ Search ranking is otherwise complete, but a security review should be confirmed before final ship if it touches any sensitive data paths.\n\n---\n\n## ❌ Release is NOT ready to ship.\n\nThree of four changes are blocking:\n\n1. **CSV export** — No spec. A spec is required before this change is releasable. (Review is done, but tests haven't been run against a defined spec.)\n\n2. **SSO** — Tests are failing. This is a hard blocker regardless of spec/review status. SSO also warrants a security review given it touches authentication. The `team-os:review` skill should be run if a peer review hasn't been completed.\n\n3. **Copy fix** — No spec and no review. Even a trivial copy change needs at minimum a review. Run `team-os:review` and determine whether a spec is required (a lightweight one-liner may suffice for a pure copy change, but it must exist).\n\n---\n\n### Recommended next steps\n\n| Change | Action needed |\n|---|---|\n| CSV export | Write and get a spec approved; run and record the test suite |\n| SSO | Fix failing tests; run `team-os:review`; conduct a security review |\n| Copy fix | Run `team-os:review`; add a minimal spec |\n\nCome back to the gate once all four rows show ✅ across every column.\n\nCriteria:\nC1: The work concludes the release is not ready and names CSV export and SSO as blockers with reasons.\nC2: The work says what the copy fix needs, or explicitly decides it can ship without a spec and says why."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS\nC2: PASS"
+}

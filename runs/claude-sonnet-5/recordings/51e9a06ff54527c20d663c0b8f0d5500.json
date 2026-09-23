@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nRelease candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?\n\nWork:\nNo — release is not ready. Here's the gate table:\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search ranking | ✅ | ✅ | ✅ green | No restricted data identified | **Ready** |\n| CSV export | ❌ missing | ✅ | ❓ not reported | Unknown — CSV export commonly touches user/PII data; needs explicit check | **Not ready** — missing spec, security review unconfirmed |\n| SSO | ✅ | ❌ missing | ❌ failing | Unknown — SSO almost certainly touches auth/restricted data; needs explicit review | **Not ready** — missing review, failing tests, security unconfirmed |\n| Copy fix | ❌ missing | ❌ missing | ❓ not reported | None expected | **Not ready** — no spec, no review, no test result on record |\n\n## Verdict: **Do not ship as-is**\n\nOnly **search ranking** is ready. The other three block the release:\n\n- **CSV export**: needs a spec written (or drop it from this release), and needs its security review confirmed given it likely exports user data.\n- **SSO**: needs a review (recommend running `team-os:review`), the failing tests must be fixed and turned green, and a security review is needed since SSO touches auth/identity data.\n- **Copy fix**: needs a spec (even a minimal one), a review, and a recorded test run — trivial to close out, but it's not documented yet so it can't be marked ready.\n\n**Options:**\n1. Pull CSV export, SSO, and the copy fix from this release and ship search ranking alone.\n2. Close the gaps above for each change, then re-run this gate.\n\nLet me know if you want me to draft the missing spec for the copy fix or kick off `team-os:review` for SSO/CSV export.\n\nCriteria:\nC1: The work concludes the release is not ready and names CSV export and SSO as blockers with reasons.\nC2: The work says what the copy fix needs, or explicitly decides it can ship without a spec and says why."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS\nC2: PASS"
+}

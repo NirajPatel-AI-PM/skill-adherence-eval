@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nRelease candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?\n\nWork:\nNo — not ready to ship. Applying the release-gate checklist to each change:\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search ranking | ✅ Done | ✅ Done | ✅ Green (`<test command not specified>`) | No restricted data noted | **Ready** |\n| CSV export | ❌ Missing | ✅ Done | ⚠️ Not confirmed | Unknown — CSV export often touches user/restricted data; not reviewed | **Not ready** — no spec, and export of data warrants explicit security review before shipping |\n| SSO | ✅ Done | ❌ Missing (no review recorded) | ❌ Failing | Unknown — SSO touches auth/identity data, high-risk if unreviewed | **Not ready** — needs review (run `team-os:review`), and tests must pass before this can ship |\n| Copy fix | ❌ Missing | ❌ Missing | ❌ Not run | None expected | **Not ready** — even trivial changes need a spec and review on record per the gate; get a lightweight spec/review or confirm tests pass |\n\n**Verdict: Release blocked.** Only search ranking is ready.\n\nBlocking items:\n- **CSV export**: write a spec; confirm/run tests; determine if it touches restricted data and get a security review if so.\n- **SSO**: run the `team-os:review` skill (review missing); fix failing tests — this is the most concerning one since auth is typically security-sensitive.\n- **Copy fix**: even minor, needs a spec/review on record and a test run to close the gate — or explicitly descope it from this release if you want to ship now.\n\nIf you want, I can pull this release down to just search ranking and ship that alone, or start on closing gaps for the other three (e.g., run `team-os:review` for SSO now).\n\nCriteria:\nC1: The work concludes the release is not ready and names CSV export and SSO as blockers with reasons.\nC2: The work says what the copy fix needs, or explicitly decides it can ship without a spec and says why."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS\nC2: PASS"
+}

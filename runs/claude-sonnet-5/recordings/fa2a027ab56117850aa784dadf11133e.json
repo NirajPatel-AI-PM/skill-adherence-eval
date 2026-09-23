@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-5",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"outcome-roadmap\">\n# Outcome roadmap\n\n1. Group the requested features by the outcome each one serves. A feature that serves no outcome goes in a separate list and is discussed first.\n2. For each outcome write: the metric, its value today, the target, and the date.\n3. Under each outcome list the bets, ranked with the `team-os:rice` skill.\n4. Mark each bet as now, next or later. Only \"now\" gets a date.\n5. Record the outcome from last month's review: which metrics moved, which did not, and what changes because of it.\n\nRun the review monthly with engineering, program management and leadership in the room. Start with step 5.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Last month we targeted 40% weekly active use and hit 31%. Onboarding emails shipped, the template gallery slipped. Draft the opening of this month's roadmap review."
+      }
+    ]
+  },
+  "response": "## Roadmap Review — September 2026\n\n### Last Month's Outcome (Step 5)\n\n**Metric: Weekly Active Use**\n- Target: 40%\n- Actual: 31%\n- **Gap: -9 points**\n\n**What shipped vs. what didn't:**\n- ✅ Onboarding emails — shipped\n- ❌ Template gallery — slipped\n\n**What we don't yet know:** whether the miss is primarily attributable to the template gallery slipping, or whether onboarding emails shipped but underperformed. Before we plan this month's bets, we should pull:\n- Weekly active use trend broken down pre/post onboarding email launch (did it move the needle at all, even partially?)\n- Any leading indicators on template gallery demand (waitlist signups, support tickets, sales asks) to confirm it's still the right bet before we re-commit to it\n\n**What changes because of it:**\n- Template gallery likely needs to move to the top of the \"now\" list this month, assuming the data above still supports it as the primary lever on weekly active use.\n- We should treat the 40% target as still open, not reset it, until we understand causality — resetting it now would mask whether the plan was wrong or the execution was late.\n- Flag for discussion: is 40% still the right target date, or does the gallery slip push the realistic date out by a full cycle?\n\n---\n\n**Next:** confirm the outcome grouping and metric ownership for this month's bets before we rank with RICE. Want me to pull together the current feature list into outcome groups now?"
+}

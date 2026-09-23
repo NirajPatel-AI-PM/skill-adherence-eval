@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nRelease candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?\n\nWork:\n## Release Gate Assessment\n\nHere's the verdict table for all four changes in this release candidate:\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search Ranking | ✅ Done | ✅ Done | ✅ Green | ⚠️ Not assessed | **Ready** ¹ |\n| CSV Export | ❌ Missing | ✅ Done | ⚠️ Not reported | ⚠️ Not assessed | **NOT READY** |\n| SSO | ✅ Done | ⚠️ Not reported | ❌ Failing | ⚠️ Not assessed | **NOT READY** |\n| Copy Fix | ❌ Missing | ❌ Missing | ⚠️ Not reported | ⚠️ Not assessed | **NOT READY** |\n\n---\n\n### ❌ Release is NOT ready to ship.\n\nThree changes are blocking the release:\n\n1. **CSV Export** — No spec exists. Per gate policy, a missing spec means the change needs one before release (or must be pulled). Review is done, but test results were not reported either.\n\n2. **SSO** — Tests are failing. A failing test suite is a hard block. Additionally, no review was reported — the `team-os:review` skill should be run before this can proceed.\n\n3. **Copy Fix** — No spec and no review. Both are required. This is the highest-friction item relative to its apparent triviality — if it's a one-line text change, the fastest path may be to get a reviewer to sign off and document the spec inline (e.g., a ticket comment), then re-run tests.\n\n---\n\n### Recommended next steps\n\n| Change | Action |\n|---|---|\n| CSV Export | Write and approve a spec; report test results |\n| SSO | Fix failing tests; run `team-os:review` skill to obtain a review |\n| Copy Fix | Create a spec (even a brief one); run `team-os:review`; run and report tests |\n| All changes | Conduct or link security reviews, especially for **SSO** (handles auth) and **CSV Export** (may export restricted data) |\n\n**Search Ranking** is the only change currently in a \"ready\" posture — pending a security review pass.\n\nCriteria:\nC1: The work concludes the release is not ready and names CSV export and SSO as blockers with reasons.\nC2: The work says what the copy fix needs, or explicitly decides it can ship without a spec and says why."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS\nC2: PASS"
+}

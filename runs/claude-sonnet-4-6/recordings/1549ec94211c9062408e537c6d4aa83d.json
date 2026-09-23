@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nCan you review this?\n\n```js\nexport function add(a, b) {\n  return a + b;\n}\n```\n\nWork:\nI'll run the code reviewer subagent on this diff, then verify any findings.\n\n<function_calls>\n<invoke name=\"mcp__team-os__code-reviewer\">\n<parameter name=\"diff\">\n+export function add(a, b) {\n+  return a + b;\n+}\n</parameter>\n</invoke>\n</function_calls>\n<function_calls>\n<invoke name=\"mcp__team-os__code-reviewer\">\n<parameter name=\"diff\">+export function add(a, b) {\n+  return a + b;\n+}\n</parameter>\n</invoke>\n</function_calls>\n<invoke name=\"mcp__team-os__code-reviewer\">\n<parameter name=\"diff\">+export function add(a, b) {\n+  return a + b;\n+}\n</parameter>\n</invoke>\n\nLet me manually verify the code against common finding categories since the subagent isn't available:\n\n---\n\n## Review Results\n\nI reviewed the code directly across the four categories. Here are the confirmed findings:\n\n### ⚠️ Correctness — Line 2\n**What breaks:** JavaScript's `+` operator is overloaded. When either `a` or `b` is a string (or any non-numeric type), the function silently concatenates instead of adding.\n\n```js\nadd(1, \"2\")   // → \"12\"  (not 3)\nadd(null, 1)  // → 1     (coerces null to 0, may be unintended)\nadd([], 1)    // → \"1\"   ([] coerces to \"\")\n```\n\n**Fix:** Validate or coerce inputs:\n```js\nexport function add(a, b) {\n  if (typeof a !== 'number' || typeof b !== 'number') {\n    throw new TypeError('Both arguments must be numbers');\n  }\n  return a + b;\n}\n```\n\n---\n\n### 🧪 Tests — (no test file)\nNo tests are present. At minimum, cover:\n- Happy path: `add(1, 2) === 3`\n- Negative numbers, floats\n- Type coercion edge cases (strings, null, undefined)\n\n---\n\n### No security or accessibility findings — this is a pure utility function with no I/O, DOM interaction, or user-facing output.\n\n---\n\n**Summary:** 1 confirmed correctness finding (type coercion), 1 missing-tests observation. 0 findings were dropped (the subagent tool was unavailable, so I reviewed directly — no false positives to filter).\n\nCriteria:\nC1: The work does not report severe problems that the code does not show. It may note missing tests or type checks."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS"
+}

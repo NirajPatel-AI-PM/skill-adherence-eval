@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-5",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"review\">\n# Review\n\n1. Run the `team-os:code-reviewer` subagent on the diff. Ask it for correctness, security, tests and accessibility findings, each with a file and line.\n2. For every finding, open the file at that line and confirm the problem is real. Drop it if the code does not show it.\n3. Report only confirmed findings, most severe first. For each, say what breaks and for which input.\n4. Say how many findings were dropped in step 2. A reviewer that is often wrong is a signal, not noise.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Can you review this?\n\n```js\nexport function add(a, b) {\n  return a + b;\n}\n```"
+      }
+    ]
+  },
+  "response": "This isn't a git repo diff, but there's no working directory context needed here — this is a tiny standalone snippet, so I'll apply the review skill's spirit directly rather than invoking the subagent tooling (no repo/diff exists to point it at).\n\n## Review of `add`\n\nI looked at the snippet itself since there's no diff/repo to pull findings from.\n\n**Confirmed findings:**\n\n1. **Correctness — no input validation, line 2.** `add(\"2\", 3)` returns `\"23\"` (string concatenation) instead of a numeric sum or an error. `add(null, 5)` returns `5`, `add(undefined, 1)` returns `NaN`. If any caller passes a non-number, behavior silently diverges from the \"add two numbers\" intent implied by the name.\n\n2. **Correctness — no handling of non-finite inputs, line 2.** `add(Infinity, -Infinity)` returns `NaN` with no signal to the caller that the result is invalid.\n\n**Dropped:** none — there was no automated subagent/diff to generate findings against, so nothing was filtered out; the two items above came from direct inspection of the code.\n\nIf this is meant to be a strict numeric-only utility, I'd add a type check (e.g., `typeof a !== 'number' || typeof b !== 'number'` → throw) and a couple of unit tests covering strings, `NaN`, and `Infinity`. Let me know if you want me to make that change."
+}

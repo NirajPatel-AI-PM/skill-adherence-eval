@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nLast month we targeted 40% weekly active use and hit 31%. Onboarding emails shipped, the template gallery slipped. Draft the opening of this month's roadmap review.\n\nWork:\n## Roadmap Review — September 2026\n\n### Last Month's Outcome (Step 5)\n\n**Metric: Weekly Active Use**\n- Target: 40%\n- Actual: 31%\n- **Gap: -9 points**\n\n**What shipped vs. what didn't:**\n- ✅ Onboarding emails — shipped\n- ❌ Template gallery — slipped\n\n**What we don't yet know:** whether the miss is primarily attributable to the template gallery slipping, or whether onboarding emails shipped but underperformed. Before we plan this month's bets, we should pull:\n- Weekly active use trend broken down pre/post onboarding email launch (did it move the needle at all, even partially?)\n- Any leading indicators on template gallery demand (waitlist signups, support tickets, sales asks) to confirm it's still the right bet before we re-commit to it\n\n**What changes because of it:**\n- Template gallery likely needs to move to the top of the \"now\" list this month, assuming the data above still supports it as the primary lever on weekly active use.\n- We should treat the 40% target as still open, not reset it, until we understand causality — resetting it now would mask whether the plan was wrong or the execution was late.\n- Flag for discussion: is 40% still the right target date, or does the gallery slip push the realistic date out by a full cycle?\n\n---\n\n**Next:** confirm the outcome grouping and metric ownership for this month's bets before we rank with RICE. Want me to pull together the current feature list into outcome groups now?\n\nCriteria:\nC1: The work opens with last month's result: which metric moved, which did not, and what changes because of it."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS"
+}

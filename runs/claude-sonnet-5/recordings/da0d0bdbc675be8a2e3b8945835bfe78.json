@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-5",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"release-gate\">\n# Release gate\n\nFor each change since the last release tag:\n\n1. Find its spec. Missing means the change needs one or leaves the release.\n2. Find its review. Missing means run the `team-os:review` skill.\n3. Run the test suite. Record the command and the result.\n4. List any restricted data the change touches, and link its security review.\n\nOutput a table: change, spec, review, tests, security, verdict. The release goes out only when every verdict is \"ready\". Name any change that is not ready and why.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Release candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?"
+      }
+    ]
+  },
+  "response": "No — not ready to ship. Applying the release gate to each change:\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search ranking | ✅ | ✅ | ✅ green | ⚠️ not assessed — need to confirm whether it touches restricted data (e.g. query logs, user content); no security review noted | **Not ready** — needs security check before it can be \"ready\" |\n| CSV export | ❌ missing | ✅ done | ⚠️ unknown (no spec, so scope of test coverage is unclear) | ⚠️ CSV export very likely touches restricted/exportable data — needs explicit security review | **Not ready** — missing spec, and no security review despite likely data exposure risk |\n| SSO | ✅ | ❌ missing (not stated as done) | ❌ failing | ⚠️ SSO almost certainly touches restricted data (auth/identity) — needs security review | **Not ready** — failing tests alone block it; also needs review + security review |\n| Copy fix | ❌ | ❌ | ❌ | — none expected, low risk | **Not ready** — no spec, no review, no tests recorded (even if trivial, nothing has been checked) |\n\n**Verdicts:** all four changes are **not ready**.\n\n- **Search ranking**: closest to shippable — spec, review, and tests are all in place. Only gap is confirming/linking a security review for any restricted data it touches. If it touches none, note that explicitly and it can go.\n- **CSV export**: blocked on missing spec (write one) and missing security review (exports of user data are a classic restricted-data risk).\n- **SSO**: blocked on failing tests (hard blocker) and missing review + security review (auth changes should always get a security review).\n- **Copy fix**: blocked on missing spec, review (run `team-os:review`), and test confirmation — even trivial changes need this recorded, not assumed.\n\n**Recommendation:** Ship nothing yet. If there's pressure to release, the fastest path is to pull SSO and copy-fix out of the candidate (furthest from ready) and focus on closing the two gaps on search ranking (security check) and CSV export (spec + security review) to get a partial release out."
+}

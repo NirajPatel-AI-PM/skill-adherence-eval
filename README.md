@@ -23,7 +23,7 @@ Replay a committed run:
 RECORDINGS_DIR=runs/claude-sonnet-5/recordings MODEL_LABEL=claude-sonnet-5 node eval.ts --repeats 3
 ```
 
-Replay needs a committed run under `runs/`. This repository has none yet [PENDING: needs Plan B Task 9], and without one this command exits 2 rather than invent a model response.
+Replay reads a committed run under `runs/`. Two are committed, one per model generation. Replay needs no login, and a missing recording makes it exit 2 rather than invent a model response.
 
 Run live on your own skills:
 
@@ -115,9 +115,20 @@ The example set in `examples/team-os/` has seven skills, copied from the `team-o
 
 ## Results
 
-[PENDING: needs Plan B Task 9]
+Two generations of the same model family ran the same 7 skills and 16 cases, 3 repeats each, on 23 Sep 2026. `claude-opus-5` judged both.
 
-This section will hold the `compare.ts` table for two model generations on the same skills and cases, whether the difference exceeds the noise floor, and the human agreement line from `rate.ts`.
+| Run | Selection | Adherence | Noise floor |
+| --- | --- | --- | --- |
+| claude-sonnet-4-6 | 96% | 72% | 15 points |
+| claude-sonnet-5 | 98% | 74% | 15 points |
+
+The adherence difference is 2 points, below the 15-point noise floor. This run is not evidence that either generation follows these skills better.
+
+Both generations did worst on the same two skills: `security-review-gate`, 33% and 17% adherent, and `spec`, 56% for each. One check failed in every repeat for both: asked for the security review of a bot that posts public status updates, both wrote the full review instead of a short one proportionate to the risk.
+
+Each run's `report.md` and `answers.md` are in `runs/`. `answers.md` shows every request, its check results and the answer.
+
+One judge call was refused by the judge model's safety filter on the first attempt and passed when run again. No person has rated these outputs with `rate.ts` yet, so the judge's agreement with a person is not measured.
 
 The cases and the skills snapshot have not changed since commit `b744e1e`, which came before any run.
 

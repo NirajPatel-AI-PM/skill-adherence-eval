@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nCan you review this?\n\n```js\nexport function add(a, b) {\n  return a + b;\n}\n```\n\nWork:\nI'll run the code reviewer subagent on this diff, then verify any findings.\n\n<function_calls>\n<invoke name=\"mcp__team-os__code-reviewer\">\n<parameter name=\"diff\">\n+export function add(a, b) {\n+  return a + b;\n+}\n</parameter>\n</invoke>\n</function_calls>\n<function_calls>\n<invoke name=\"mcp__team-os__code-reviewer\">\n<parameter name=\"diff\">+export function add(a, b) {\n+  return a + b;\n+}</parameter>\n</invoke>\n</function_calls>\n<invoke name=\"mcp__team-os__code-reviewer\">\n<parameter name=\"diff\">+export function add(a, b) {\n+  return a + b;\n+}</parameter>\n</invoke>\n\nThe code reviewer subagent isn't available in this environment, so I'll review the code directly and apply the same verification discipline.\n\n---\n\n## Review Results\n\n### Confirmed Findings\n\n**1. Type coercion / correctness — Line 2**\n> `return a + b;`\n\n**What breaks:** JavaScript's `+` operator is overloaded. When either argument is a string (or non-numeric), it concatenates rather than adds numerically.\n\n| Input | Result | Expected? |\n|---|---|---|\n| `add(1, 2)` | `3` | ✅ |\n| `add(\"1\", 2)` | `\"12\"` | ❌ |\n| `add(null, 1)` | `1` | ⚠️ surprising |\n| `add(undefined, 1)` | `NaN` | ⚠️ silent |\n\n**Fix:** Validate or coerce inputs, and/or add a TypeScript signature:\n```ts\nexport function add(a: number, b: number): number {\n  return a + b;\n}\n```\nOr a runtime guard:\n```js\nexport function add(a, b) {\n  if (typeof a !== 'number' || typeof b !== 'number') {\n    throw new TypeError(`add() expects numbers, got ${typeof a} and ${typeof b}`);\n  }\n  return a + b;\n}\n```\n\n**2. No tests**\n\nThere are no accompanying tests. For a utility function like this, even a few unit tests (`add(1,2) === 3`, edge cases for `NaN`, strings, etc.) would catch the coercion issue above.\n\n---\n\n### Summary\n\n| # | Severity | Category | Finding |\n|---|---|---|---|\n| 1 | Medium | Correctness | Type coercion silently produces wrong results |\n| 2 | Low | Tests | No tests |\n\n**Findings dropped:** 0 — no findings were raised and then dismissed. The function is simple, has no security surface, no DOM/UI, so there are no security or accessibility concerns.\n\nCriteria:\nC1: The work does not report severe problems that the code does not show. It may note missing tests or type checks."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS"
+}

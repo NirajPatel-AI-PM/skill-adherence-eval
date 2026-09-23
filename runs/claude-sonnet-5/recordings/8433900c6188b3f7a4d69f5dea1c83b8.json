@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-5",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You can use these skills. Each has a name and says when to use it.\n\n- design-brief: Use when a spec needs design work. Turns the spec into a brief a designer can start from, tied to the team's design system.\n- outcome-roadmap: Use when building or reviewing a roadmap. Turns a feature list into outcomes with measures, so a review debates results instead of requests.\n- release-gate: Use before a release. Checks that every change in it traces to a spec, passed review, and has its tests green, and lists what does not.\n- review: Use before merging a change. Runs the read-only code-reviewer subagent, then checks each finding against the code before reporting it.\n- rice: Use when choosing between requests, or when someone asks why their request is not on the roadmap. Scores items with RICE against an outcome and writes the reasoning for a \"not now\".\n- security-review-gate: Use before asking security to approve a new integration, MCP server or data flow. Produces the review artifact security reads before it signs off.\n- spec: Use before building anything that takes more than an hour. Writes a one-page spec that names the outcome, the user, the smallest version that proves it, and how you will know it worked.\n\nRead the user's request. If one skill applies, answer with one line: SKILL: <name>\nIf none applies, answer: SKILL: none",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Can you review this?\n\n```js\nexport function add(a, b) {\n  return a + b;\n}\n```"
+      }
+    ]
+  },
+  "response": "SKILL: none"
+}

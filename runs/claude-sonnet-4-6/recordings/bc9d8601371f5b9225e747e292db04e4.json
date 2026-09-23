@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"outcome-roadmap\">\n# Outcome roadmap\n\n1. Group the requested features by the outcome each one serves. A feature that serves no outcome goes in a separate list and is discussed first.\n2. For each outcome write: the metric, its value today, the target, and the date.\n3. Under each outcome list the bets, ranked with the `team-os:rice` skill.\n4. Mark each bet as now, next or later. Only \"now\" gets a date.\n5. Record the outcome from last month's review: which metrics moved, which did not, and what changes because of it.\n\nRun the review monthly with engineering, program management and leadership in the room. Start with step 5.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Last month we targeted 40% weekly active use and hit 31%. Onboarding emails shipped, the template gallery slipped. Draft the opening of this month's roadmap review."
+      }
+    ]
+  },
+  "response": "# Monthly Roadmap Review — September 2026\n\n---\n\n## Step 5 · Last Month's Outcome Review\n\n*Start here, before any forward-looking discussion.*\n\n---\n\n### Metric Result\n\n| Metric | Target | Actual | Status |\n|---|---|---|---|\n| Weekly Active Use | 40% | 31% | 🔴 Missed — 9 pp gap |\n\n---\n\n### What Shipped\n\n| Bet | Status |\n|---|---|\n| Onboarding emails | ✅ Shipped |\n| Template gallery | ❌ Slipped |\n\n---\n\n### What This Changes\n\n**The 9-point gap is too large to explain away with a single slip.** Before moving to this month's bets, the room should align on one of three reads:\n\n1. **Target was wrong.** 40% was set without a clear baseline or activation funnel. Revise the target and the date.\n2. **Onboarding emails landed too late or underperformed.** Pull open-rate and click-through data now. If conversion to active use was weak, email alone is not the lever.\n3. **Template gallery was load-bearing.** If the gallery was expected to drive a meaningful share of the 9 pp, its slip is the primary cause — and it moves to **Now** this month with a hard ship date.\n\n**Decision needed before proceeding:** Which read does the data support? Assign someone to pull activation funnel numbers and email engagement metrics before this meeting ends.\n\n---\n\n### Carry-Forward Posture\n\n- Template gallery is presumed **Now** until the team argues otherwise with data.\n- Weekly active use target of 40% remains open. Confirm, revise, or extend the date — do not carry it forward unchanged without a deliberate choice.\n- Any new bets proposed today must be weighed against closing the existing gap first.\n\n---\n\n*Proceed to Step 1 — feature grouping by outcome — once the above three questions have answers.*"
+}

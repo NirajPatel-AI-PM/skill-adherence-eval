@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 0,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nThree requests came in this week: (1) SSO for the internal wiki, about 300 users, 2 person-months; (2) a CSV export one team asked for, 12 users, 0.5 person-months; (3) a dark theme, 300 users, 1 person-month, nobody has asked twice. Our outcome is weekly active use of the wiki. Rank them.\n\nWork:\nScoring against weekly active use of the wiki. Impact is the judgment call here — I'm rating each on how much it plausibly moves *weekly return visits*, not general satisfaction.\n\n| # | Item | Reach | Impact | Confidence | Effort | Score |\n|---|---|---|---|---|---|---|\n| 1 | SSO | 300 | 2 (high — removes a login-friction barrier that suppresses return visits) | 80% | 2 | 300×2×0.8÷2 = **240** |\n| 3 | Dark theme | 300 | 0.5 (low — comfort feature, weak link to *return* behavior) | 50% (no repeated demand, impact on WAU is a guess) | 1 | 300×0.5×0.5÷1 = **75** |\n| 2 | CSV export | 12 | 1 (medium — useful to those users, but export ≠ coming back to the wiki) | 80% | 0.5 | 12×1×0.8÷0.5 = **19.2** |\n\n## Rank\n\n**1. SSO — 240**\n**2. Dark theme — 75**\n**3. CSV export — 19.2**\n\n## For the items that don't make the cut\n\n**Dark theme (75, loses to SSO)**\n- What would change the answer: a second or third request would lift confidence past 50% and justify discovery; or evidence that visual friction (not login friction) is actually what's suppressing WAU, which nothing here supports.\n- Path to the outcome without it: none needed — it's a low-cost nice-to-have, not a WAU driver. Fine to batch into a future polish pass, not worth sequencing ahead of SSO.\n\n**CSV export (19.2, loses to both)**\n- What would change the answer: if the 12 users are a leading indicator of a broader workflow gap (e.g., they need data out because the wiki can't do something core), that's a different, possibly bigger problem — worth a 15-minute discovery conversation, not the export itself. Or if reach turns out to be underestimated (e.g., this is a proxy for a wider reporting need).\n- Path to the outcome without it: ask what they're exporting for. Often it's \"I need this in a spreadadsheet for one thing\" — a saved view, a shared link, or a one-time manual export solves it without building a feature that doesn't touch WAU at all.\n\nBottom line: SSO is the only one with both real reach and a direct mechanical link to weekly active use (login pain directly suppresses visits). Ship that first.\n\nCriteria:\nC1: The work gives a RICE score for all three requests and ranks them.\nC2: For each request that does not make the cut, the work says what it lost to and what would change the answer."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS\nC2: PASS"
+}

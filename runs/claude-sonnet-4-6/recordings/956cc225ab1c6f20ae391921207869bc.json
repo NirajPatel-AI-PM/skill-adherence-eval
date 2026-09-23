@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nWrite a spec for adding dark mode to the admin console.\n\nWork:\nBefore I write this spec, I need to ask about two required sections the skill flags as blockers:\n\n1. **Outcome** — Dark mode is a feature. What's the *behavior change* you're after? For example:\n   - Admins spend more time in the console during evening hours?\n   - Fewer complaints / support tickets about eye strain?\n   - Higher satisfaction scores from power users?\n\n2. **Measure** — What metric would tell you dark mode succeeded, where does it come from, and what number counts as a win?\n\nWithout these two, the spec would just be a task list. What's the goal here?\n\nCriteria:\nC1: Because the request gives no outcome or measure, the work asks the user for them instead of inventing a full spec."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS"
+}

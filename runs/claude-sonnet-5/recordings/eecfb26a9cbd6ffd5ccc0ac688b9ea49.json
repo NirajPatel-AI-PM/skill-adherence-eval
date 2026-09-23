@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 1,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nLast month we targeted 40% weekly active use and hit 31%. Onboarding emails shipped, the template gallery slipped. Draft the opening of this month's roadmap review.\n\nWork:\n# Roadmap Review — Opening: Last Month in Review\n\n**Outcome targeted:** Weekly active use\n**Metric:** 40% weekly active users\n**Result:** 31% (missed by 9 points)\n\n## What moved\n- **Onboarding emails** shipped on schedule. No measurable lift in weekly active use attributable to this yet — worth checking whether it's a lagging signal (new cohort still ramping) or the lever just isn't strong enough on its own.\n\n## What didn't move\n- **Template gallery slipped.** This was likely the higher-leverage bet for activation/return visits, and it didn't ship — so we're judging the 40% target on a roadmap that only partially landed.\n\n## What changes because of it\n- We shouldn't treat 31% as a verdict on the strategy — it's a verdict on one of two bets landing. Open questions for the room:\n  1. Why did the template gallery slip — scope, dependency, or prioritization? Is it still \"now,\" or does it need to move to \"next\"?\n  2. Do we have any read on onboarding email engagement (open/click/activation rate) to know if it's working but insufficient, or not working?\n  3. Do we re-target 40% next month assuming template gallery ships, or reset the target given one month's slippage?\n\nLet's use this to decide whether weekly active use stays the primary outcome this cycle, and how we re-sequence the bets underneath it.\n\n---\n\nWant me to build out the rest of the review (outcome table, RICE-ranked bets, now/next/later) once we've talked through these questions, or draft it now with placeholders for the open items above?\n\nCriteria:\nC1: The work opens with last month's result: which metric moved, which did not, and what changes because of it."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS"
+}

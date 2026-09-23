@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"spec\">\n# Spec\n\nWrite `specs/YYYY-MM-DD-<topic>.md` with these sections, in this order. One page.\n\n1. **Outcome.** The change in user behavior or a metric, in one sentence. Not a feature.\n2. **Who.** The user and the job they are doing when they need this.\n3. **Evidence.** What makes us think the problem is real. Quote users or cite a number. If there is none, say so, and make the first milestone finding some.\n4. **Smallest version.** The least we can ship that tests the outcome. List what is out.\n5. **Measure.** The metric, where it comes from, its value today, and the value that counts as success. Decide this before building.\n6. **Risks.** Safety, privacy, data handling and security. Name who has to approve.\n7. **Decisions.** Each open question, the options, and who decides by when.\n\nStop and ask the user when section 1 or section 5 is empty. A spec without an outcome or a measure is a task list.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "We keep hearing that people can't find last quarter's planning docs in our internal wiki. I want to build a better search. Write the spec before we start."
+      }
+    ]
+  },
+  "response": "Before I write the spec, I need to pin down two things the skill requires before proceeding:\n\n**Section 1 — Outcome:** You've described a feature (better search), but I need the behavior change. Which of these is closest?\n\n- Employees stop asking teammates \"can you send me the link?\" for planning docs\n- Employees find the doc they need without leaving the wiki (no Slack/email detour)\n- Time spent searching drops below X minutes per session\n- Something else?\n\n**Section 5 — Measure:** What does success look like in a number? For example:\n\n- Search sessions that end with a doc opened within 2 minutes (today vs. target?)\n- % of searches with zero results returned\n- Weekly \"can't find it\" Slack messages (if trackable)\n- A survey score\n\nDo you have any baseline data today — search logs, support tickets, a survey? Or is the first milestone figuring that out?\n\nOnce you answer these two, I'll write the full spec without stopping again."
+}

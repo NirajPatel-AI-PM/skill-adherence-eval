@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-5",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"outcome-roadmap\">\n# Outcome roadmap\n\n1. Group the requested features by the outcome each one serves. A feature that serves no outcome goes in a separate list and is discussed first.\n2. For each outcome write: the metric, its value today, the target, and the date.\n3. Under each outcome list the bets, ranked with the `team-os:rice` skill.\n4. Mark each bet as now, next or later. Only \"now\" gets a date.\n5. Record the outcome from last month's review: which metrics moved, which did not, and what changes because of it.\n\nRun the review monthly with engineering, program management and leadership in the room. Start with step 5.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Last month we targeted 40% weekly active use and hit 31%. Onboarding emails shipped, the template gallery slipped. Draft the opening of this month's roadmap review."
+      }
+    ]
+  },
+  "response": "# Roadmap Review — Opening: Last Month's Outcome\n\n**Step 5: Review last month's results first.**\n\n## Metric: Weekly Active Use\n- **Target:** 40%\n- **Actual:** 31%\n- **Result:** Missed by 9 points\n\n## What moved and what didn't\n- **Onboarding emails — shipped.** No visible lift in weekly active use yet, or a lift that wasn't enough to close the gap. We should check activation-cohort data before writing this off — it's possible it helped a specific segment but didn't move the aggregate number.\n- **Template gallery — slipped.** This was likely a meaningful lever for weekly active use (return usage, not just first-session activation), and its absence is a plausible primary driver of the miss.\n\n## What changes because of it\n- **Open questions to settle in this session before re-committing to a target:**\n  1. Do we have segment-level data on the onboarding email cohort vs. non-cohort weekly active use? If it moved the needle for new users but overall is flat, that's a different story than \"it didn't work.\"\n  2. Why did the template gallery slip — scope, dependency, staffing? Is it now a \"now\" bet for this month, or does it need to be re-scoped before it can be trusted with a date again?\n  3. Was 40% the right target for this month given the template gallery was already at risk when it was set? If the gallery slipping was known/likely, the target may have been set on an assumption that didn't hold.\n- **Working conclusion going in:** treat template gallery as the primary suspect for the miss, keep it as the top-ranked bet this month, and don't set a new weekly-active-use target until we know whether it ships and by when. If it slips again, we should discuss whether it's scoped correctly rather than re-dating it a third time.\n\n---\n\nOnce we align on the above, I'll move to Step 1 (grouping this month's requested features by outcome) and Step 2 (setting this month's metric/target/date) — flag if you want to adjust the target before we lock it in, or if there's more context on the onboarding email results to fold in."
+}

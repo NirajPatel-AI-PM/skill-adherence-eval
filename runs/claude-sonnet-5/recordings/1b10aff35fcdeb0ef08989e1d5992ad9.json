@@ -1,0 +1,17 @@
+{
+  "model": "claude-opus-5",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "You check whether a piece of work meets a list of criteria.\n\nYou see the user's request, the work, and the criteria. You do not see who or what produced the work.\n\nFor each criterion, answer on its own line, in order, in exactly this form:\n\nC1: PASS\nC2: FAIL\n\nPASS only when the work clearly meets the criterion. If you are unsure, FAIL. Write nothing else.\n",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Request:\nCan you review this?\n\n```js\nexport function add(a, b) {\n  return a + b;\n}\n```\n\nWork:\nThis isn't a git repo diff, but there's no working directory context needed here — this is a tiny standalone snippet, so I'll apply the review skill's spirit directly rather than invoking the subagent tooling (no repo/diff exists to point it at).\n\n## Review of `add`\n\nI looked at the snippet itself since there's no diff/repo to pull findings from.\n\n**Confirmed findings:**\n\n1. **Correctness — no input validation, line 2.** `add(\"2\", 3)` returns `\"23\"` (string concatenation) instead of a numeric sum or an error. `add(null, 5)` returns `5`, `add(undefined, 1)` returns `NaN`. If any caller passes a non-number, behavior silently diverges from the \"add two numbers\" intent implied by the name.\n\n2. **Correctness — no handling of non-finite inputs, line 2.** `add(Infinity, -Infinity)` returns `NaN` with no signal to the caller that the result is invalid.\n\n**Dropped:** none — there was no automated subagent/diff to generate findings against, so nothing was filtered out; the two items above came from direct inspection of the code.\n\nIf this is meant to be a strict numeric-only utility, I'd add a type check (e.g., `typeof a !== 'number' || typeof b !== 'number'` → throw) and a couple of unit tests covering strings, `NaN`, and `Infinity`. Let me know if you want me to make that change.\n\nCriteria:\nC1: The work does not report severe problems that the code does not show. It may note missing tests or type checks."
+      }
+    ],
+    "model": "claude-opus-5"
+  },
+  "response": "C1: PASS"
+}

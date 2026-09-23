@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6",
+  "thinking": "disabled",
+  "repeat": 2,
+  "stop_reason": "end_turn",
+  "request": {
+    "system": "Follow this skill to handle the user's request.\n\nYou cannot write files. Where the skill says to write a file, output its full contents instead.\n\n<skill name=\"release-gate\">\n# Release gate\n\nFor each change since the last release tag:\n\n1. Find its spec. Missing means the change needs one or leaves the release.\n2. Find its review. Missing means run the `team-os:review` skill.\n3. Run the test suite. Record the command and the result.\n4. List any restricted data the change touches, and link its security review.\n\nOutput a table: change, spec, review, tests, security, verdict. The release goes out only when every verdict is \"ready\". Name any change that is not ready and why.\n</skill>",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Release candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?"
+      }
+    ]
+  },
+  "response": "## Release Gate Assessment\n\nHere's the verdict table for the four changes in this release candidate:\n\n| Change | Spec | Review | Tests | Security | Verdict |\n|---|---|---|---|---|---|\n| Search ranking | ✅ Done | ✅ Done | ✅ Green | ⚠️ Not assessed | **Ready** ¹ |\n| CSV export | ❌ Missing | ✅ Done | ⚠️ Not assessed | ⚠️ Not assessed | **NOT READY** |\n| SSO | ✅ Done | ⚠️ Not assessed | ❌ Failing | ⚠️ Not assessed | **NOT READY** |\n| Copy fix | ❌ Missing | ❌ Missing | ⚠️ Not assessed | ⚠️ Not assessed | **NOT READY** |\n\n> ¹ Search ranking is otherwise complete, but a security review should be confirmed before final ship if it touches any sensitive data paths.\n\n---\n\n## ❌ Release is NOT ready to ship.\n\nThree of four changes are blocking:\n\n1. **CSV export** — No spec. A spec is required before this change is releasable. (Review is done, but tests haven't been run against a defined spec.)\n\n2. **SSO** — Tests are failing. This is a hard blocker regardless of spec/review status. SSO also warrants a security review given it touches authentication. The `team-os:review` skill should be run if a peer review hasn't been completed.\n\n3. **Copy fix** — No spec and no review. Even a trivial copy change needs at minimum a review. Run `team-os:review` and determine whether a spec is required (a lightweight one-liner may suffice for a pure copy change, but it must exist).\n\n---\n\n### Recommended next steps\n\n| Change | Action needed |\n|---|---|\n| CSV export | Write and get a spec approved; run and record the test suite |\n| SSO | Fix failing tests; run `team-os:review`; conduct a security review |\n| Copy fix | Run `team-os:review`; add a minimal spec |\n\nCome back to the gate once all four rows show ✅ across every column."
+}
