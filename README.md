@@ -118,7 +118,7 @@ The example set in `examples/team-os/` has seven skills, copied from the `team-o
 
 This section will hold the `compare.ts` table for two model generations on the same skills and cases, whether the difference exceeds the noise floor, and the human agreement line from `rate.ts`.
 
-The cases have not changed since commit `2bb029c`, which came before any run.
+The cases and the skills snapshot have not changed since commit `b744e1e`, which came before any run.
 
 ## What this does not prove
 
