@@ -31,6 +31,23 @@ export class MissingRecording extends Error {
   }
 }
 
+export type Identity = { email?: string; orgName?: string };
+
+let identity: Identity | undefined;
+// Claude Code tells the model the logged-in email, even in safe mode, so answers can quote it or the company it implies.
+function loginIdentity(): Identity {
+  identity ??= JSON.parse(execFileSync('claude', ['auth', 'status', '--json'], { encoding: 'utf8' })) as Identity;
+  return identity;
+}
+
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+export function scrub(text: string, id: Identity): string {
+  let out = text;
+  if (id.email) out = out.replace(new RegExp(escape(id.email), 'gi'), '<user email>');
+  if (id.orgName) out = out.replace(new RegExp(`\\b${escape(id.orgName)}\\b`, 'gi'), '<user org>');
+  return out;
+}
+
 export async function callModel(req: Request, mode: Mode): Promise<ModelResponse> {
   const key = keyOf(req);
   const path = join(recordingsDir(), `${key}.json`);
@@ -56,8 +73,9 @@ export async function callModel(req: Request, mode: Mode): Promise<ModelResponse
   if (body.is_error) throw new Error(`model call failed for request ${key}: ${body.result}`);
   if (!body.modelUsage?.[model]) throw new Error(`asked for ${model}, Claude Code answered with ${Object.keys(body.modelUsage ?? {}).join(', ')}`);
   if (!body.result) throw new Error(`empty response for request ${key}, stop_reason ${body.stop_reason}`);
+  const response = scrub(body.result, loginIdentity());
 
   mkdirSync(recordingsDir(), { recursive: true });
-  writeFileSync(path, JSON.stringify({ model, thinking: 'disabled', repeat, stop_reason: body.stop_reason, request: req, response: body.result }, null, 2) + '\n');
-  return { text: body.result };
+  writeFileSync(path, JSON.stringify({ model, thinking: 'disabled', repeat, stop_reason: body.stop_reason, request: req, response }, null, 2) + '\n');
+  return { text: response };
 }

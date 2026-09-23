@@ -127,7 +127,7 @@ The cases and the skills snapshot have not changed since commit `b744e1e`, which
 - There are 16 cases. Thirteen score adherence, one to three per skill, which is too few to rank the skills against each other.
 - A model judges some checks. The judge model is pinned (`JUDGE_MODEL`, default `claude-opus-5`) separately from the model under test, and the eval pins the rubric by hash, but a judge is not a person. `rate.ts` measures how often a person agrees with it.
 - The selection prompt approximates how an agent finds skills. It lists each skill's name and description and asks for one line back. It is not Claude Code's own prompt or any other product's.
-- Claude Code adds a few hundred tokens of its own context to each call, even in safe mode. The eval cannot remove it, so the model sees slightly more than the eval's prompt.
+- Claude Code adds a few hundred tokens of its own context to each call, even in safe mode. The eval cannot remove it, so the model sees slightly more than the eval's prompt. That context includes the date, the working directory and the logged-in email. An answer can quote the email or the company it implies, so before live mode saves an answer or passes it to the judge, it replaces the email with `<user email>` and the organization name from `claude auth status` with `<user org>`.
 - Claude Code sets the output token limit. An answer that goes past it stops the run with an error; it is never scored.
 - The model runs at its default temperature, which `claude -p` does not let the eval set, so each repeat samples again. The noise floor measures the spread across repeats, and three repeats is a small sample of it.
 - Thinking is off on every call.

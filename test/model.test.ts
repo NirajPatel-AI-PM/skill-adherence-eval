@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { MissingRecording, callModel, keyOf, setRepeat } from '../src/model.ts';
+import { MissingRecording, callModel, keyOf, scrub, setRepeat } from '../src/model.ts';
 
 const req = { system: 's', messages: [{ role: 'user' as const, content: 'one' }] };
 
@@ -34,4 +34,10 @@ test('the judge key does not depend on MODEL_LABEL, but the plain key does', () 
   const b = run('b');
   assert.notEqual(a.plain, b.plain);
   assert.equal(a.judge, b.judge);
+});
+
+test('scrub replaces the login email and the company name it implies', () => {
+  const id = { email: 'pat@acme.example', orgName: 'Acme' };
+  assert.equal(scrub('Author: Pat@Acme.example, security@acme.example, ACME team, acmeish', id), 'Author: <user email>, security@<user org>.example, <user org> team, acmeish');
+  assert.equal(scrub('no login facts', {}), 'no login facts');
 });
