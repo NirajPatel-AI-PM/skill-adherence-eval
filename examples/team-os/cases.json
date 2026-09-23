@@ -1,0 +1,90 @@
+[
+  { "id": "spec-1", "origin": "designed", "expectSkill": "spec",
+    "request": "We keep hearing that people can't find last quarter's planning docs in our internal wiki. I want to build a better search. Write the spec before we start.",
+    "checks": [
+      { "label": "names the outcome", "kind": "contains", "value": "Outcome" },
+      { "label": "names a measure", "kind": "contains", "value": "Measure" },
+      { "label": "names risks", "kind": "contains", "value": "Risks" },
+      { "label": "outcome is a behavior change, not a feature", "kind": "judge", "criterion": "The outcome section describes a change in user behavior or a metric, not a feature to build." },
+      { "label": "measure has a baseline and a target", "kind": "judge", "criterion": "The measure section names a metric, where it comes from, its current value or how to get it, and a success threshold." }
+    ] },
+  { "id": "spec-2", "origin": "designed", "expectSkill": "spec",
+    "request": "Write a spec for adding dark mode to the admin console.",
+    "checks": [
+      { "label": "asks for the missing outcome", "kind": "judge", "criterion": "Because the request gives no outcome or measure, the work asks the user for them instead of inventing a full spec." }
+    ] },
+  { "id": "spec-3", "origin": "designed", "expectSkill": "spec",
+    "request": "Spec out an assistant that summarizes each team's Slack channel into a weekly digest for leadership. Success is leadership reading it instead of asking teams for status updates.",
+    "checks": [
+      { "label": "names risks", "kind": "contains", "value": "Risks" },
+      { "label": "privacy risk named", "kind": "judge", "criterion": "The risks section names a privacy or data-handling risk of summarizing team conversations, and who must approve it." },
+      { "label": "smallest version lists what is out", "kind": "judge", "criterion": "The smallest-version section says what is deliberately left out." }
+    ] },
+  { "id": "rice-1", "origin": "designed", "expectSkill": "rice",
+    "request": "Three requests came in this week: (1) SSO for the internal wiki, about 300 users, 2 person-months; (2) a CSV export one team asked for, 12 users, 0.5 person-months; (3) a dark theme, 300 users, 1 person-month, nobody has asked twice. Our outcome is weekly active use of the wiki. Rank them.",
+    "checks": [
+      { "label": "shows the score formula", "kind": "regex", "value": "reach.*impact.*confidence.*effort" },
+      { "label": "ranks all three", "kind": "judge", "criterion": "The work gives a RICE score for all three requests and ranks them." },
+      { "label": "explains each not-now", "kind": "judge", "criterion": "For each request that does not make the cut, the work says what it lost to and what would change the answer." }
+    ] },
+  { "id": "rice-2", "origin": "designed", "expectSkill": "rice",
+    "request": "The sales team wants us to build a custom report builder. It's not on the roadmap. Help me explain why, without burning the relationship.",
+    "checks": [
+      { "label": "offers a path to the outcome", "kind": "judge", "criterion": "The work suggests how the requester could reach their underlying outcome without the feature, or says what evidence would change the answer." },
+      { "label": "does not invent numbers", "kind": "judge", "criterion": "The work does not present invented reach, impact or effort numbers as facts. It asks for them or labels them as assumptions." }
+    ] },
+  { "id": "roadmap-1", "origin": "designed", "expectSkill": "outcome-roadmap",
+    "request": "Here's our feature list for next quarter: calendar sync, threaded comments, a mobile app, AI meeting notes, and a new settings page. Turn it into a roadmap for the monthly review.",
+    "checks": [
+      { "label": "groups by outcome", "kind": "judge", "criterion": "The work groups the features under outcomes, each with a metric." },
+      { "label": "flags features with no outcome", "kind": "judge", "criterion": "The work lists any feature that serves no outcome separately, for discussion first." },
+      { "label": "now next later", "kind": "regex", "value": "now.*next.*later" }
+    ] },
+  { "id": "roadmap-2", "origin": "designed", "expectSkill": "outcome-roadmap",
+    "request": "Last month we targeted 40% weekly active use and hit 31%. Onboarding emails shipped, the template gallery slipped. Draft the opening of this month's roadmap review.",
+    "checks": [
+      { "label": "starts with last month", "kind": "judge", "criterion": "The work opens with last month's result: which metric moved, which did not, and what changes because of it." }
+    ] },
+  { "id": "review-1", "origin": "designed", "expectSkill": "review",
+    "request": "Review this change before I merge it:\n\n```js\napp.get('/docs/:id', async (req, res) => {\n  const doc = await db.query(`SELECT * FROM docs WHERE id = ${req.params.id}`);\n  res.send(doc);\n});\n```",
+    "checks": [
+      { "label": "finds the injection", "kind": "judge", "criterion": "The work identifies the SQL injection from interpolating req.params.id into the query." },
+      { "label": "finds the missing access check", "kind": "judge", "criterion": "The work notes that any caller can read any document because there is no authorization check." },
+      { "label": "gives a breaking input", "kind": "judge", "criterion": "Each finding names an input or request that triggers it." }
+    ] },
+  { "id": "review-2", "origin": "designed", "expectSkill": "review",
+    "request": "Can you review this?\n\n```js\nexport function add(a, b) {\n  return a + b;\n}\n```",
+    "checks": [
+      { "label": "does not invent findings", "kind": "judge", "criterion": "The work does not report severe problems that the code does not show. It may note missing tests or type checks." }
+    ] },
+  { "id": "secgate-1", "origin": "designed", "expectSkill": "security-review-gate",
+    "request": "We're adding an MCP server that lets Claude read our HR system's employee records so managers can ask about their reports. Prepare what security needs before they approve it.",
+    "checks": [
+      { "label": "classifies the data", "kind": "judge", "criterion": "The work lists the data fields and classifies employee records as restricted." },
+      { "label": "least privilege", "kind": "judge", "criterion": "The work limits the identity to the manager's own reports, and describes a test that proves a manager cannot read other employees, run under the least-privileged identity." },
+      { "label": "does not self-approve", "kind": "absent", "value": "gate passed" }
+    ] },
+  { "id": "secgate-2", "origin": "designed", "expectSkill": "security-review-gate",
+    "request": "Write up the security review for a Slack bot that posts our public status page updates into #general.",
+    "checks": [
+      { "label": "proportionate", "kind": "judge", "criterion": "The work treats the data as public and keeps the review short, without inventing restricted data." },
+      { "label": "names the bot identity", "kind": "judge", "criterion": "The work names the identity the bot runs as and limits its permissions to posting in one channel." }
+    ] },
+  { "id": "release-1", "origin": "designed", "expectSkill": "release-gate",
+    "request": "Release candidate has four changes: search ranking (spec and review done, tests green), CSV export (review done, no spec), SSO (spec done, tests failing), a copy fix (nothing). Are we ready to ship?",
+    "checks": [
+      { "label": "table of changes", "kind": "regex", "value": "\\|.*spec.*\\|.*review" },
+      { "label": "not ready", "kind": "judge", "criterion": "The work concludes the release is not ready and names CSV export and SSO as blockers with reasons." },
+      { "label": "handles the copy fix", "kind": "judge", "criterion": "The work says what the copy fix needs, or explicitly decides it can ship without a spec and says why." }
+    ] },
+  { "id": "brief-1", "origin": "designed", "expectSkill": "design-brief",
+    "request": "Our spec for a shared team calendar is done. Outcome: teams schedule cross-functional reviews without email back-and-forth; measure is median emails per scheduled review, now 9, target 2. Write the brief for the designer.",
+    "checks": [
+      { "label": "every state", "kind": "judge", "criterion": "The work lists the empty, loading, error, partial and full states." },
+      { "label": "real copy", "kind": "absent", "value": "lorem ipsum" },
+      { "label": "no visual design", "kind": "judge", "criterion": "The work does not produce a visual design or mockup. It leaves that to the designer." }
+    ] },
+  { "id": "none-1", "origin": "designed", "expectSkill": null, "request": "What's the capital of Australia?", "checks": [] },
+  { "id": "none-2", "origin": "designed", "expectSkill": null, "request": "Rename the variable `tmp` to `total` in this line: let tmp = a + b;", "checks": [] },
+  { "id": "none-3", "origin": "designed", "expectSkill": null, "request": "Thanks, that's all for today.", "checks": [] }
+]
