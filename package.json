@@ -1,0 +1,9 @@
+{
+  "name": "skill-adherence-eval",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Does the model pick the right skill, and then follow it? Measured on any folder of SKILL.md files.",
+  "engines": { "node": ">=24" },
+  "scripts": { "test": "node --test test/*.test.ts" }
+}
