@@ -20,9 +20,9 @@ for (const [i, r] of order.entries()) {
   // A long answer scrolls the request off screen, so it is repeated next to the question.
   console.log(`--- End of answer ${i + 1} of ${order.length}. The request was: ${request}`);
   let a = '';
-  while (a !== 'u' && a !== 'd' && a !== 'q') a = (await rl.question('Rate the whole answer. If a teammate gave you this for that request, would you use it? [u]p yes, [d]own no, [q]uit: ')).trim();
+  while (a !== 'y' && a !== 'n' && a !== 'q') a = (await rl.question('Rate the whole answer. If a teammate gave you this for that request, would you use it? [y]es, [n]o, [q]uit: ')).trim().toLowerCase();
   if (a === 'q') break;
-  ratings.push({ caseId: r.caseId, repeat: r.repeat, rating: a === 'u' ? 'up' : 'down' });
+  ratings.push({ caseId: r.caseId, repeat: r.repeat, rating: a === 'y' ? 'up' : 'down' });
   writeFileSync(ratingsPath, JSON.stringify(ratings, null, 2) + '\n');
 }
 rl.close();
