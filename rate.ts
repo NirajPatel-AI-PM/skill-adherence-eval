@@ -15,9 +15,12 @@ const rated = new Set(ratings.map((r) => `${r.caseId}:${r.repeat}`));
 const order = rows.filter((r) => !rated.has(`${r.caseId}:${r.repeat}`)).map((r) => ({ r, k: Math.random() })).sort((a, b) => a.k - b.k).map((x) => x.r);
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 for (const [i, r] of order.entries()) {
-  console.log(`\n--- ${i + 1} of ${order.length} ---\nRequest: ${cases.get(r.caseId)}\n\n${r.output}\n`);
+  const request = cases.get(r.caseId);
+  console.log(`\n--- ${i + 1} of ${order.length} ---\nRequest: ${request}\n\n${r.output}\n`);
+  // A long answer scrolls the request off screen, so it is repeated next to the question.
+  console.log(`--- End of answer ${i + 1} of ${order.length}. The request was: ${request}`);
   let a = '';
-  while (a !== 'u' && a !== 'd' && a !== 'q') a = (await rl.question('Would you use this? [u]p, [d]own, [q]uit: ')).trim();
+  while (a !== 'u' && a !== 'd' && a !== 'q') a = (await rl.question('Rate the whole answer. If a teammate gave you this for that request, would you use it? [u]p yes, [d]own no, [q]uit: ')).trim();
   if (a === 'q') break;
   ratings.push({ caseId: r.caseId, repeat: r.repeat, rating: a === 'u' ? 'up' : 'down' });
   writeFileSync(ratingsPath, JSON.stringify(ratings, null, 2) + '\n');

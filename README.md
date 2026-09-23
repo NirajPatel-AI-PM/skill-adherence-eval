@@ -54,7 +54,7 @@ To compare runs, pass their output folders to `compare.ts`. It prints one table 
 node compare.ts runs/claude-sonnet-5 runs/another-model
 ```
 
-To check the judge against a person, run `rate.ts` on a run folder. It shows each scored output in random order, without the eval's verdict, and asks whether you would use it. It writes your answers to `ratings.json` and prints how many of your ratings the eval agreed with.
+To check the judge against a person, run `rate.ts` on a run folder. It shows each scored output in random order, without the eval's verdict, and asks whether you would use it if a teammate gave it to you for that request. You rate the whole answer; lines inside it such as a gate's "NOT PASSED" are the model's work, not the eval's verdict. It writes your answers to `ratings.json` and prints how many of your ratings the eval agreed with.
 
 ```bash
 node rate.ts runs/claude-sonnet-5
