@@ -14,7 +14,7 @@ export function selectionRequest(skills: Skill[], request: string): Request {
 }
 
 export function parseSelection(text: string): string | null | undefined {
-  const m = /SKILL:\W*([\w-]+)/i.exec(text);
+  const m = /^\W*SKILL:\W*([\w-]+)/im.exec(text);
   if (!m) return undefined;
   const name = m[1].toLowerCase();
   return name === 'none' ? null : name;

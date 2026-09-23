@@ -44,3 +44,9 @@ test('the header says temperature default when none is set', () => {
   const md = renderReport(rows, { model: 'm', temperature: undefined, rubric: 'abc123', skills: 'x', mode: 'replay', judge: 'j' });
   assert.match(md, /temperature default/);
 });
+
+test('truncated answers are counted and reported', () => {
+  const t = [{ ...rows[0], truncated: true }, ...rows.slice(1)];
+  assert.equal(summarize(t).truncated, 1);
+  assert.equal(summarize(rows).truncated, 0);
+});

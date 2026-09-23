@@ -9,17 +9,28 @@ export type Mode = 'live' | 'replay';
 export const recordingsDir = () => process.env.RECORDINGS_DIR ?? 'recordings';
 export const MODEL_LABEL = process.env.MODEL_LABEL ?? 'claude-sonnet-5';
 export const JUDGE_MODEL = process.env.JUDGE_MODEL ?? 'claude-opus-5';
-export const TEMPERATURE: number | undefined = process.env.TEMPERATURE ? Number(process.env.TEMPERATURE) : undefined;
+export const TEMPERATURE = parseTemperature(process.env.TEMPERATURE);
+
+function parseTemperature(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const n = Number(value);
+  if (!Number.isFinite(n)) throw new Error(`TEMPERATURE must be a number, got "${value}"`);
+  return n;
+}
+
+// Only judge requests set req.model, and the judge always runs at its default temperature.
+const temperatureFor = (req: Request) => (req.model ? undefined : TEMPERATURE);
+
+export type ModelResponse = { text: string; stopReason: string };
 
 let repeat = 0;
 export function setRepeat(n: number): void {
   repeat = n;
 }
 
-// The whole request is the key, so an edited skill can never reuse an old answer.
-// req.model overrides the model field, so a judge request's key never depends on MODEL_LABEL.
+// The whole request is the key, and req.model overrides MODEL_LABEL so judge keys ignore the model under test.
 export function keyOf(req: Request): string {
-  const body = { model: MODEL_LABEL, temperature: TEMPERATURE ?? 'default', thinking: 'disabled', ...req, ...(repeat ? { repeat } : {}) };
+  const body = { model: MODEL_LABEL, temperature: temperatureFor(req) ?? 'default', thinking: 'disabled', ...req, ...(repeat ? { repeat } : {}) };
   return createHash('sha256').update(JSON.stringify(body)).digest('hex').slice(0, 32);
 }
 
@@ -42,22 +53,26 @@ async function fetchWithRetry(url: string, init: RequestInit): Promise<Response>
   }
 }
 
-export async function callModel(req: Request, mode: Mode): Promise<string> {
+export async function callModel(req: Request, mode: Mode): Promise<ModelResponse> {
   const key = keyOf(req);
   const path = join(recordingsDir(), `${key}.json`);
-  if (existsSync(path)) return JSON.parse(readFileSync(path, 'utf8')).response as string;
+  if (existsSync(path)) {
+    const rec = JSON.parse(readFileSync(path, 'utf8'));
+    return { text: rec.response, stopReason: rec.stop_reason };
+  }
   if (mode === 'replay') throw new MissingRecording(key);
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error('live mode needs ANTHROPIC_API_KEY');
   const model = req.model ?? MODEL_LABEL;
+  const temperature = temperatureFor(req);
   const res = await fetchWithRetry('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model,
       max_tokens: req.maxTokens,
-      ...(TEMPERATURE !== undefined ? { temperature: TEMPERATURE } : {}),
+      ...(temperature !== undefined ? { temperature } : {}),
       thinking: { type: 'disabled' },
       system: req.system,
       messages: req.messages,
@@ -71,7 +86,7 @@ export async function callModel(req: Request, mode: Mode): Promise<string> {
   mkdirSync(recordingsDir(), { recursive: true });
   writeFileSync(
     path,
-    JSON.stringify({ model, temperature: TEMPERATURE ?? 'default', thinking: 'disabled', repeat, stop_reason: body.stop_reason, request: req, response }, null, 2) + '\n',
+    JSON.stringify({ model, temperature: temperature ?? 'default', thinking: 'disabled', repeat, stop_reason: body.stop_reason, request: req, response }, null, 2) + '\n',
   );
-  return response;
+  return { text: response, stopReason: body.stop_reason };
 }

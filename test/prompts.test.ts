@@ -19,6 +19,7 @@ test('selection parses a name, none, and garbage', () => {
   assert.equal(parseSelection('SKILL: spec'), 'spec');
   assert.equal(parseSelection('Thinking...\nSKILL: none'), null);
   assert.equal(parseSelection('I would use the spec skill'), undefined);
+  assert.equal(parseSelection('The skill: I would pick spec'), undefined);
 });
 
 test('selection parses markdown around the label, and lowercases the name', () => {

@@ -42,7 +42,7 @@ Live mode reads `ANTHROPIC_API_KEY` from the environment. It calls the API only 
 | `--out <dir>` | `results` | Where `report.md` and `rows.json` go. |
 | `RECORDINGS_DIR` | `recordings` | Where the eval reads and writes recordings. |
 | `MODEL_LABEL` | `claude-sonnet-5` | The model id sent to the API. It is part of every recording key. |
-| `TEMPERATURE` | unset | The sampling temperature. Sent only when set; current model generations reject an explicit temperature with a 400, so leave this unset for them. Part of every recording key as the value or `default`. |
+| `TEMPERATURE` | unset | The sampling temperature. Sent only when set; current model generations reject an explicit temperature with a 400, so leave this unset for them. A value that is not a number stops the run. Never sent to the judge. Part of every recording key as the value or `default`, except judge keys. |
 | `JUDGE_MODEL` | `claude-opus-5` | The model that grades judge checks. Pinned across runs, so changing `MODEL_LABEL` to test a new generation moves only the model under test, not the grader. |
 
 The skill loader reads single-line `name` and `description` fields from the front matter. It does not support multi-line YAML values.
@@ -126,6 +126,7 @@ The cases and the skills snapshot have not changed since commit `b744e1e`, which
 - There are 16 cases. Thirteen score adherence, one to three per skill, which is too few to rank the skills against each other.
 - A model judges some checks. The judge model is pinned (`JUDGE_MODEL`, default `claude-opus-5`) separately from the model under test, and the eval pins the rubric by hash, but a judge is not a person. `rate.ts` measures how often a person agrees with it.
 - The selection prompt approximates how an agent finds skills. It lists each skill's name and description and asks for one line back. It is not Claude Code's own prompt or any other product's.
+- An answer that hits the token limit is scored as written. The report counts these on its Truncated line.
 - The model runs at the default temperature unless `TEMPERATURE` is set, so each repeat still samples again. The noise floor measures the spread across repeats, and three repeats is a small sample of it.
 - Thinking is off on every call.
 - Adherence runs as one turn with no tools. The prompt tells the model to print a file's contents where the skill says to write the file. An agent with tools may behave differently.
