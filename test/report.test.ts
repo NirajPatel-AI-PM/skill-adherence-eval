@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderReport, summarize, type Row } from '../src/report.ts';
+import { renderAnswers, renderReport, summarize, type Row } from '../src/report.ts';
 
 const row = (repeat: number, caseId: string, expectSkill: string | null, selected: string | null, adherent: boolean | null, failed: string[] = []): Row => ({
   model: 'm', repeat, caseId, origin: 'designed', expectSkill, selected, selectionCorrect: selected === expectSkill,
@@ -40,3 +40,11 @@ test('the report states the model, judge, rubric version and noise floor', () =>
   assert.match(md, /Noise floor: 50 points/);
 });
 
+
+test('answers.md shows each request, its failed checks and the answer', () => {
+  const md = renderAnswers(rows, new Map([['b', 'Write a spec.']]));
+  assert.match(md, /## b, repeat 0\n\nRequest: Write a spec\./);
+  assert.match(md, /Expected spec, picked rice/);
+  assert.match(md, /FAIL: has a measure/);
+  assert.match(md, /### Answer\n\no/);
+});

@@ -95,3 +95,18 @@ export function renderReport(rows: Row[], meta: { model: string; judge: string; 
     '',
   ].join('\n');
 }
+
+export function renderAnswers(rows: Row[], requests: Map<string, string>): string {
+  const mark = (ok: boolean | null) => (ok === null ? 'n/a' : ok ? 'PASS' : 'FAIL');
+  const blocks = rows.map((r) => [
+    `## ${r.caseId}, repeat ${r.repeat}`,
+    '',
+    `Request: ${requests.get(r.caseId) ?? ''}`,
+    '',
+    `- Selection: ${mark(r.selectionCorrect)}. Expected ${r.expectSkill ?? 'none'}, picked ${r.selected === undefined ? 'an unparseable answer' : r.selected ?? 'none'}.`,
+    `- Adherence: ${mark(r.adherent)}.`,
+    ...r.checks.map((k) => `  - ${mark(k.pass)}: ${k.label}`),
+    ...(r.output ? ['', '### Answer', '', r.output] : []),
+  ].join('\n'));
+  return ['# Skill adherence: answers', '', ...blocks].join('\n\n') + '\n';
+}

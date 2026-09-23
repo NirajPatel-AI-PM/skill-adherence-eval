@@ -41,7 +41,7 @@ Each call runs in safe mode with no tools, so your own skills, plugins, hooks an
 | `--skills <dir>` | `examples/team-os/skills` | A folder of skill folders, each with a `SKILL.md`. |
 | `--cases <file>` | `examples/team-os/cases.json` | The cases to run. |
 | `--repeats <n>` | `1` | How many times each case runs. Two or more measure the noise floor. |
-| `--out <dir>` | `results` | Where `report.md` and `rows.json` go. |
+| `--out <dir>` | `results` | Where the output goes: `report.md` with the scores, `answers.md` with each request, its check results and the model's answer, and `rows.json` with the same data for code. |
 | `RECORDINGS_DIR` | `recordings` | Where the eval reads and writes recordings. |
 | `MODEL_LABEL` | `claude-sonnet-5` | The model id passed to `claude --model`. It is part of every recording key. If Claude Code answers with a different model, the run stops. |
 | `JUDGE_MODEL` | `claude-opus-5` | The model that grades judge checks. Pinned across runs, so changing `MODEL_LABEL` to test a new generation moves only the model under test, not the grader. |

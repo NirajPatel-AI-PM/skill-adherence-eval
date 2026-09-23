@@ -44,7 +44,14 @@ export async function callModel(req: Request, mode: Mode): Promise<ModelResponse
   if (req.messages.length !== 1 || req.messages[0].role !== 'user') throw new Error('live mode sends exactly one user message');
   // Safe mode and no tools keep the caller's skills, plugins, hooks and CLAUDE.md out of the request.
   const args = ['-p', '--safe-mode', '--tools', '', '--system-prompt', req.system, '--model', model, '--output-format', 'json', '--no-session-persistence', '--settings', '{"alwaysThinkingEnabled":false}'];
-  const out = execFileSync('claude', args, { input: req.messages[0].content, cwd: tmpdir(), encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  let out: string;
+  try {
+    out = execFileSync('claude', args, { input: req.messages[0].content, cwd: tmpdir(), encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  } catch (e) {
+    // claude exits non-zero on an API error but still prints the JSON result.
+    out = (e as { stdout?: string }).stdout || '';
+    if (!out) throw e;
+  }
   const body = JSON.parse(out) as { is_error: boolean; result: string; stop_reason: string; modelUsage?: Record<string, unknown> };
   if (body.is_error) throw new Error(`model call failed for request ${key}: ${body.result}`);
   if (!body.modelUsage?.[model]) throw new Error(`asked for ${model}, Claude Code answered with ${Object.keys(body.modelUsage ?? {}).join(', ')}`);
